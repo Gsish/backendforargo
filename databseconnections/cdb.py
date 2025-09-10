@@ -5,3 +5,5 @@ client = chromadb.CloudClient(
   tenant='55d1436a-2863-493d-8be4-66db67963ad7',
   database='metadataforargo'
 )
+
+
