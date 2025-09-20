@@ -21,7 +21,6 @@ class BAAIBGEEmbeddings:
             inputs = self.tokenizer(value, return_tensors="pt", truncation=True, padding=True)
             with torch.no_grad():
                 outputs = self.model(**inputs)
-                # Use mean pooling of last hidden state as embedding
                 emb = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
                 embeddings[key] = emb
 
@@ -52,17 +51,17 @@ def proccessnetcdf(pat: str):
             "coordinates": {coord: ds[coord].values.tolist() for coord in var.coords}
         }
 
-    # Merge dataset attributes
+    
     metadata = variables_dict.copy()
     metadata.update(ds.attrs) 
 
-    # Serialize entire metadata as one JSON string
+    
     serialized_metadata = json.dumps(metadata)
 
-    # Create one embedding for the full metadata
+   
     embedding = obj.embed_documents({"full_metadata": serialized_metadata})
 
-    # Store in a single row/collection
+    
     collection = cdb.client.get_or_create_collection("netcdf_metadata")
     collection.add(
         ids=["full_metadata"],
