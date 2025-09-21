@@ -1,9 +1,10 @@
 
-from models.structure import  Netcdf
+from models.structure import  Netcdf,userquery
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datapipline import vectorization,pos
+from llminferance.chatwithagent import runcode
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,5 +28,13 @@ async def get_hello(request :Netcdf):
 
 
     return {"files_received": request.filename, "type": request.typeoffile}
+
+
+@app.post("/api/chat")
+async def chatwllmm(request : userquery):
+    res = runcode(request.query)
+    return {"files_received": request.filename, "type": request.typeoffile}
+
+
 
 
