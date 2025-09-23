@@ -1,4 +1,3 @@
-
 from models.structure import  Netcdf,userquery
 from typing import Union
 from fastapi import FastAPI,File, UploadFile
@@ -6,7 +5,6 @@ from pydantic import BaseModel
 from datapipline import vectorization,pos
 from llminferance.chatwithagent import runcode
 from typing import List
-
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
