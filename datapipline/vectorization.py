@@ -5,26 +5,27 @@ import torch
 
 from databseconnections import cdb
 
+
 class BAAIBGEEmbeddings:
     def __init__(self, model_name="BAAI/bge-small-en"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name)
 
-    def embed_documents(self, texts: dict):
-        """
-        texts: dict where key -> document ID, value -> document text
-        returns: dict of embeddings with same keys
-        """
-        embeddings = {}
-
-        for key, value in texts.items():
-            inputs = self.tokenizer(value, return_tensors="pt", truncation=True, padding=True)
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        """Embed a list of texts into vectors"""
+        embeddings = []
+        for text in texts:
+            inputs = self.tokenizer(text, return_tensors="pt", truncation=True, padding=True)
             with torch.no_grad():
-                outputs = self.model(**inputs)
-                emb = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
-                embeddings[key] = emb
-
+                model_output = self.model(**inputs)
+                # Mean pooling
+                embedding = model_output.last_hidden_state.mean(dim=1).squeeze().tolist()
+            embeddings.append(embedding)
         return embeddings
+
+    def embed_query(self, text: str) -> list[float]:
+        """Embed a single query"""
+        return self.embed_documents([text])[0]
 
     def embed_query(self, text):
         return self.embed_documents([text])[0]
